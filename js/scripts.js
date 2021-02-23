@@ -38,7 +38,6 @@ function createCard(arr){
           </div>
       </div>`)
     }
-    console.log(arr)
   }
 
   function searchProfiles(event){
@@ -62,9 +61,10 @@ function createCard(arr){
     }
 };
 
+
 //creates modalwindow element that is triggered by eventListener as callback.
 //builds HTML for modal window, using people attributes, similar to createCard function
-function createModalWindow(event){
+function createModalWindow(){
   if (event.target.className !== 'gallery'){
     for (let i = 0; i < people.length; i++){
         if (event.target.textContent === `${people[i].name.last} ${people[i].name.first}`
@@ -85,19 +85,45 @@ function createModalWindow(event){
                           <p class="modal-text">${people[i].location.street.number} ${people[i].location.street.name}, ${people[i].location.city}, ${people[i].location.state} ${people[i].location.postcode}</p>
                           <p class="modal-text">Birthday: ${people[i].dob.date.split('-')[1]}/${people[i].dob.date.split('-')[2][0]+people[i].dob.date.split('-')[2][1]}/${people[i].dob.date.split('-')[0]}</p>
                       </div>
+                  </div>
+                  <div class="modal-btn-container">
+                      <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
+                      <button type="button" id="modal-next" class="modal-next btn">Next</button>
                   </div>`)
+
       } else {
           continue;
       }
       return people;
+    }
   }
-}
 };
 
+function prevProfile(event){
+  if (event.target.textContent === 'Prev'){
+    for (let i = 0; i < people.length; i++){
+      //seemed like the only way to select these elements in the modal, would get 'null' otherwise, even if they
+      //were already created. 
+      let name = event.target.parentNode.previousElementSibling.children[1].children[1].textContent;
+      console.log(name)
+      if (name === `${people[i].name.last} ${people[i].name.first}`){
+        console.log(people[i-1])
+        createModalWindow(people[i-1])
+      }
+    }
+  }
+};
+
+function nextProfile(event){
+  if (event.target.textContent === 'Next'){
+    console.log('next')
+  }
+
+}
 //closes modalWindow when 'x' is selected
 function closeModalWindow(event){
   let modalWindow = document.querySelector('.modal-container')
-  if (event.target.textContent === 'X'){
+    if (event.target.textContent === 'X'){
       modalWindow.style.display = 'none'
   }
 }
@@ -107,3 +133,5 @@ function closeModalWindow(event){
 gallery.addEventListener('click', createModalWindow);
 gallery.addEventListener('click', closeModalWindow);
 searchImg.addEventListener('click', searchProfiles);
+gallery.addEventListener('click', nextProfile);
+gallery.addEventListener('click', prevProfile);
