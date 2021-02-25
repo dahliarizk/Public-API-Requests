@@ -64,13 +64,14 @@ function createCard(arr){
 
 //creates modalwindow element that is triggered by eventListener as callback.
 //builds HTML for modal window, using people attributes, similar to createCard function
-function createModalWindow(){
+function createModalWindow(person){
   if (event.target.className !== 'gallery'){
     for (let i = 0; i < people.length; i++){
+      let person = people[i];
         if (event.target.textContent === `${people[i].name.last} ${people[i].name.first}`
           || event.target.textContent === `${people[i].email}`
           || event.target.textContent === `${people[i].location.city}, ${people[i].location.state}`
-          || event.target.src === `${people[i].picture.thumbnail}` ){
+          || event.target.src === `${people[i].picture.thumbnail}` || event.target.type === 'button'){
             gallery.insertAdjacentHTML('afterbegin', `
               <div class="modal-container">
                   <div class="modal">
@@ -99,16 +100,20 @@ function createModalWindow(){
   }
 };
 
-function prevProfile(event){
+function prevProfile(person){
   if (event.target.textContent === 'Prev'){
     for (let i = 0; i < people.length; i++){
       //seemed like the only way to select these elements in the modal, would get 'null' otherwise, even if they
-      //were already created. 
+      //were already created.
+
       let name = event.target.parentNode.previousElementSibling.children[1].children[1].textContent;
-      console.log(name)
       if (name === `${people[i].name.last} ${people[i].name.first}`){
-        console.log(people[i-1])
-        createModalWindow(people[i-1])
+        let modalWindow = document.querySelector('.modal-container');
+        modalWindow.style.display = 'none';
+        console.log(modalWindow)
+        let person = people[i-1]
+        console.log(person)
+        createModalWindow(person)
       }
     }
   }
@@ -130,8 +135,8 @@ function closeModalWindow(event){
 
 
 //event listeners
-gallery.addEventListener('click', createModalWindow);
+gallery.addEventListener('click', (person) => createModalWindow(person));
 gallery.addEventListener('click', closeModalWindow);
 searchImg.addEventListener('click', searchProfiles);
 gallery.addEventListener('click', nextProfile);
-gallery.addEventListener('click', prevProfile);
+gallery.addEventListener('click', person => prevProfile(person));
