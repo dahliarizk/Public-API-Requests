@@ -6,11 +6,15 @@ let header = document.querySelector('.header-text-container');
 //then calls createCard function to build one card per person object
 fetch ('https://randomuser.me/api/?results=12&nat=us,dk,fr,gb,ca,au,nz,de')
     .then(response => response.json())
-    .then(data => people = data.results)
-    .then(people => {
-      createCard(people)
-      return people
+    .then(data => {console.log(data.results)
+      let people = data.results
+      return people;
+    })
+
+    .then(people => {createCard(people);
+          people => createModalWindow(people);
     });
+
 
 //creates searchBar form and button
 let searchBar = document.querySelector('.search-container')
@@ -24,17 +28,18 @@ let input = document.querySelectorAll('input')[0];
 let searchImg = document.querySelectorAll('input')[1];
 
 //builds HTML for card div using people attributes
-function createCard(arr){
-    for (let i = 0; i < arr.length; i++){
+function createCard(people){
+    console.log(people);
+    for (let i = 0; i < people.length; i++){
       gallery.insertAdjacentHTML('beforeend', `
       <div class="card">
           <div class="card-img-container">
-              <img class="card-img" src="${arr[i].picture.thumbnail}" alt="profile picture">
+              <img class="card-img" src="${people[i].picture.thumbnail}" alt="profile picture">
           </div>
           <div class="card-info-container">
-              <h3 id="name" class="card-name cap">${arr[i].name.last} ${arr[i].name.first}</h3>
-              <p class="card-text">${arr[i].email}</p>
-              <p class="card-text cap">${arr[i].location.city}, ${arr[i].location.state}</p>
+              <h3 id="name" class="card-name cap">${people[i].name.last} ${people[i].name.first}</h3>
+              <p class="card-text">${people[i].email}</p>
+              <p class="card-text cap">${people[i].location.city}, ${people[i].location.state}</p>
           </div>
       </div>`)
     }
@@ -64,7 +69,7 @@ function createCard(arr){
 
 //creates modalwindow element that is triggered by eventListener as callback.
 //builds HTML for modal window, using people attributes, similar to createCard function
-function createModalWindow(person){
+function createModalWindow(event){
   if (event.target.className !== 'gallery'){
     for (let i = 0; i < people.length; i++){
       let person = people[i];
@@ -95,7 +100,6 @@ function createModalWindow(person){
       } else {
           continue;
       }
-      return people;
     }
   }
 };
