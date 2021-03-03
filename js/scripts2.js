@@ -15,11 +15,29 @@ fetch ('https://randomuser.me/api/?results=12&nat=us,dk,fr,gb,ca,au,nz,de')
     .then(people => {
           createCard(people);
           let cards = document.querySelectorAll('.card');
-          for (let i = 0; i < cards.length; i++){
-            cards[i].addEventListener('click', addUniqueFeatures)
-            cards[i].addEventListener('click', updateModalWindow)
+          cards.forEach(card => card.addEventListener('click', () => {
+              addUniqueFeatures()
+          }))
+          cards.forEach(card => card.addEventListener('click', () => {
+          for (let i = 0; i < people.length; i++){
+            let person = people[i]
+            updateModalWindow(person)
+            }
+          }))
+          document.addEventListener('click', () => {
+            if (event.target.textContent === 'Prev'){
+                  prevProfile(people);
+              }
+            });
+
+        document.addEventListener('click', () => {
+          if (event.target.textContent === 'Next'){
+
           }
+        })
+
     });
+
 
 
 //creates searchBar form and button
@@ -52,7 +70,8 @@ function createCard(people){
     return people;
   }
 
-  function addUniqueFeatures(person){
+  function addUniqueFeatures(){
+      console.log(event.target)
       gallery.insertAdjacentHTML('afterend', `
       <div class="modal-container">
           <div class="modal">
@@ -69,7 +88,7 @@ function createCard(people){
       modalWindow.addEventListener('click', e => {
         if (e.target.textContent === 'X'){
           modalWindow.style.display = 'none';
-        }
+      }
       })
   };
 
@@ -81,21 +100,36 @@ function createCard(people){
     //option to append unique modal info
 
 
-function updateModalWindow(people){
-  console.log(people)
-    let modalInfo = document.querySelector('.modal-info-container');
-    modalInfo.innerHTML = '';
-      for (let i = 0; i < people.length; i++){
-          person = people[i]
-          modalInfo.insertAdjacentHTML('afterbegin', `
-            <img class="modal-img" src="https://placehold.it/125x125" alt="profile picture">
-            <h3 id="name" class="modal-name cap">name</h3>
-            <p class="modal-text">email</p>
-            <p class="modal-text cap">city</p>
+function updateModalWindow(person){
+  if (event.target.textContent === `${person.name.last} ${person.name.first}`
+        || event.target.textContent === `${person.email}`
+        || event.target.textContent === `${person.location.city}, ${person.location.state}`
+        || event.target.src === `${person.picture.thumbnail}` || event.target.type === 'button'){
+        let modalInfo = document.querySelector('.modal-info-container');
+        console.log(modalInfo)
+        modalInfo.innerHTML = '';
+        console.log(person)
+        modalInfo.insertAdjacentHTML('afterbegin', `
+            <img class="modal-img" src="${person.picture.thumbnail}" alt="profile picture">
+            <h3 id="name" class="modal-name cap">${person.name.last} ${person.name.first}</h3>
+            <p class="modal-text">${person.email}</p>
+            <p class="modal-text cap">${person.location.city}, ${person.location.state}</p>
             <hr>
-            <p class="modal-text">(555) 555-5555</p>
-            <p class="modal-text">123 Portland Ave., Portland, OR 97204</p>
-            <p class="modal-text">Birthday: 10/21/2015</p>
+            <p class="modal-text">${person.cell}</p>
+            <p class="modal-text">${person.location.street.number} ${person.location.street.name}, ${person.location.city}, ${person.location.state} ${person.location.postcode}</p>
+            <p class="modal-text">${person.dob.date.split('-')[1]}/${person.dob.date.split('-')[2][0]+person.dob.date.split('-')[2][1]}/${person.dob.date.split('-')[0]}</p>
         `)
       }
-  };
+    };
+
+  function prevProfile(people){
+    let name = document.querySelector('h3').textContent;
+    for (let i = 0; i < people.length; i++){
+      if (name === `${people[i].name.last} ${people[i].name.first}`){
+        let modalWindow = document.querySelector('.modal-container');
+        let person = people[i-1]
+        console.log(person);
+        updateModalWindow(person)
+      }
+    }
+  }
