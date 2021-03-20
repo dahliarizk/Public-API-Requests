@@ -3,7 +3,7 @@ let cards = gallery.children
 let header = document.querySelector('.header-text-container');
 
 //fetch request to return data from randomuser API, and return people array of objects
-//then calls createCard function to build one card per person object
+//then calls createCard function to build one card per people[i] object
 fetch ('https://randomuser.me/api/?results=12&nat=us,dk,fr,gb,ca,au,nz,de')
     .then(response => response.json())
     .then(data => {
@@ -14,33 +14,23 @@ fetch ('https://randomuser.me/api/?results=12&nat=us,dk,fr,gb,ca,au,nz,de')
 
     .then(people => {
           createCard(people);
+          addModalWindow();
           let cards = document.querySelectorAll('.card');
           cards.forEach(card => card.addEventListener('click', () => {
-              addUniqueFeatures()
-          }))
-          cards.forEach(card => card.addEventListener('click', () => {
-          for (let i = 0; i < people.length; i++){
-            let person = people[i]
-            updateModalWindow(person)
+              updateModalWindow(people)
+          }));
+          document.addEventListener('click', e => {
+            if (e.target.textContent === 'Prev'){
+              //prevProfile function
             }
-          }))
-          document.addEventListener('click', () => {
-            if (event.target.textContent === 'Prev'){
-                  prevProfile(people);
-              }
-            });
-
-        document.addEventListener('click', () => {
-          if (event.target.textContent === 'Next'){
-
-          }
-        })
-
-    });
+          })
+          //searchFunction goes here
+      });
+      .catch(error => console.log('There is an issue', error)); 
 
 
 
-//creates searchBar form and button
+//creates searchBar form and button. to be built on later.
 let searchBar = document.querySelector('.search-container')
 searchBar.innerHTML = `
     <form action="#" method="get">
@@ -70,8 +60,7 @@ function createCard(people){
     return people;
   }
 
-  function addUniqueFeatures(){
-      console.log(event.target)
+  function addModalWindow(){
       gallery.insertAdjacentHTML('afterend', `
       <div class="modal-container">
           <div class="modal">
@@ -85,51 +74,36 @@ function createCard(people){
           </div>
       </div>`);
       let modalWindow = document.querySelector('.modal-container');
+      modalWindow.style.display = 'none';
+  };
+
+
+function updateModalWindow(people){
+  let modalWindow = document.querySelector('.modal-container');
+  modalWindow.style.display = 'block'
+  for (let i = 0; i < people.length; i++){
+    if (event.target.textContent === `${people[i].name.last} ${people[i].name.first}`
+          || event.target.textContent === `${people[i].email}`
+          || event.target.textContent === `${people[i].location.city}, ${people[i].location.state}`
+          || event.target.src === `${people[i].picture.thumbnail}` || event.target.type === 'button'){
+          let modalInfo = document.querySelector('.modal-info-container');
+          modalInfo.innerHTML = '';
+          console.log(i)
+          modalInfo.insertAdjacentHTML('afterbegin', `
+              <img class="modal-img" src="${people[i].picture.thumbnail}" alt="profile picture">
+              <h3 id="name" class="modal-name cap">${people[i].name.last} ${people[i].name.first}</h3>
+              <p class="modal-text">${people[i].email}</p>
+              <p class="modal-text cap">${people[i].location.city}, ${people[i].location.state}</p>
+              <hr>
+              <p class="modal-text">${people[i].cell}</p>
+              <p class="modal-text">${people[i].location.street.number} ${people[i].location.street.name}, ${people[i].location.city}, ${people[i].location.state} ${people[i].location.postcode}</p>
+              <p class="modal-text">${people[i].dob.date.split('-')[1]}/${people[i].dob.date.split('-')[2][0]+people[i].dob.date.split('-')[2][1]}/${people[i].dob.date.split('-')[0]}</p>
+          `)
+        }
+      };
       modalWindow.addEventListener('click', e => {
         if (e.target.textContent === 'X'){
           modalWindow.style.display = 'none';
       }
-      })
+    });
   };
-
-  // Create update modal function that accepts one parameter, which will be an employee object
-    // Target the "modal-info-container" div and set its inner HTML to an empty string, ''
-    // Use example markup and interpolated template literals with the info in the parameter
-    //to add the unique parts of the modal
-    // Target the "modal-info-container" div and use insertAdjacentHTML method with 'afterbegin'
-    //option to append unique modal info
-
-
-function updateModalWindow(person){
-  if (event.target.textContent === `${person.name.last} ${person.name.first}`
-        || event.target.textContent === `${person.email}`
-        || event.target.textContent === `${person.location.city}, ${person.location.state}`
-        || event.target.src === `${person.picture.thumbnail}` || event.target.type === 'button'){
-        let modalInfo = document.querySelector('.modal-info-container');
-        console.log(modalInfo)
-        modalInfo.innerHTML = '';
-        console.log(person)
-        modalInfo.insertAdjacentHTML('afterbegin', `
-            <img class="modal-img" src="${person.picture.thumbnail}" alt="profile picture">
-            <h3 id="name" class="modal-name cap">${person.name.last} ${person.name.first}</h3>
-            <p class="modal-text">${person.email}</p>
-            <p class="modal-text cap">${person.location.city}, ${person.location.state}</p>
-            <hr>
-            <p class="modal-text">${person.cell}</p>
-            <p class="modal-text">${person.location.street.number} ${person.location.street.name}, ${person.location.city}, ${person.location.state} ${person.location.postcode}</p>
-            <p class="modal-text">${person.dob.date.split('-')[1]}/${person.dob.date.split('-')[2][0]+person.dob.date.split('-')[2][1]}/${person.dob.date.split('-')[0]}</p>
-        `)
-      }
-    };
-
-  function prevProfile(people){
-    let name = document.querySelector('h3').textContent;
-    for (let i = 0; i < people.length; i++){
-      if (name === `${people[i].name.last} ${people[i].name.first}`){
-        let modalWindow = document.querySelector('.modal-container');
-        let person = people[i-1]
-        console.log(person);
-        updateModalWindow(person)
-      }
-    }
-  }
