@@ -16,8 +16,8 @@ fetch ('https://randomuser.me/api/?results=12&nat=us,dk,fr,gb,ca,au,nz,de')
           createCard(people);
           addModalWindow();
           let cards = document.querySelectorAll('.card');
-          cards.forEach(card => card.addEventListener('click', () => {
-              updateModalWindow(people)
+          cards.forEach(card => card.addEventListener('click', (event) => {
+              updateModalWindow(people, event)
           }));
           document.addEventListener('click', e => {
             if (e.target.textContent === 'Prev'){
@@ -26,7 +26,7 @@ fetch ('https://randomuser.me/api/?results=12&nat=us,dk,fr,gb,ca,au,nz,de')
           })
           //searchFunction goes here
       });
-      .catch(error => console.log('There is an issue', error)); 
+  //.catch(error => console.log('There is an issue', error));
 
 
 
