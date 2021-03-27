@@ -59,8 +59,26 @@ function addModalWindow(){
     modalWindow.style.display = 'none';
 };
 
-//updates modal window content using people array. compares event target of the click with each of the objects and if they match
-//displays corresponding object.
+//function to format phone number and remove the extra '-',
+//references from https://stackoverflow.com/questions/8358084/regular-expression-to-reformat-a-us-phone-number-in-javascript
+function formatPhoneNumber(phoneNumberString) {
+  var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+  var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+  } else {
+    return null;
+  }
+};
+
+//function to format date
+function formatDOB(date){
+  return `${date.split('-')[1]}/${date.split('-')[2][0]+date.split('-')[2][1]}/${date.split('-')[0]}`
+};
+
+
+//updates modal window content using people array. compares event target of the click with each of the objects
+//if they match displays corresponding object.
 function updateModalWindow(people, event){
   let modalWindow = document.querySelector('.modal-container');
   modalWindow.style.display = 'block'
@@ -78,9 +96,9 @@ function updateModalWindow(people, event){
                 <p class="modal-text">${people[i].email}</p>
                 <p class="modal-text cap">${people[i].location.city}, ${people[i].location.state}</p>
                 <hr>
-                <p class="modal-text">${people[i].cell}</p>
+                <p class="modal-text">${formatPhoneNumber(people[i].cell)}</p>
                 <p class="modal-text">${people[i].location.street.number} ${people[i].location.street.name}, ${people[i].location.city}, ${people[i].location.state} ${people[i].location.postcode}</p>
-                <p class="modal-text">${people[i].dob.date.split('-')[1]}/${people[i].dob.date.split('-')[2][0]+people[i].dob.date.split('-')[2][1]}/${people[i].dob.date.split('-')[0]}</p>
+                <p class="modal-text">${formatDOB(people[i].dob.date)}</p>
             `)
         }
       };
